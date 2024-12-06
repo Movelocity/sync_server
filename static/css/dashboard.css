@@ -1,0 +1,116 @@
+body {
+  background-color: #212121;
+  color: #ffffff;
+}
+
+.card {
+  background-color: #2d2d2d;
+}
+
+.header {
+  color: #e0e0e0;
+}
+
+.client-status {
+  border-radius: 4px;
+  margin-bottom: 8px;
+  padding: 10px !important;
+  transition: background-color 0.3s ease;
+}
+
+.row-ex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.status-ok {
+  background-color: #16571a;
+}
+
+.status-warning {
+  background-color: #5e5653;
+}
+
+.clients-container {
+  margin: 0;
+}
+
+.file-list {
+  margin: 16px 0 0 0;
+}
+
+.file-list li {
+  background-color: #3d3d3d;
+  border-radius: 4px;
+  padding: 8px 16px;
+  margin-bottom: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.file-list li:hover {
+  background-color: #4a4a4a;
+}
+
+.file-list .remove-btn {
+  cursor: pointer;
+  color: #ff5252;
+  padding: 4px 8px;
+  border-radius: 50%;
+}
+
+.file-list .remove-btn:hover {
+  background-color: rgba(255, 82, 82, 0.1);
+}
+
+.btn {
+  margin-right: 10px;
+}
+
+.btn:last-child {
+  margin-right: 0;
+}
+
+.client-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.client-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.note-text {
+  cursor: pointer;
+  padding: 2px 5px;
+  border-radius: 3px;
+  color: #aaa;
+}
+
+.note-text:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.delete-btn {
+  cursor: pointer;
+  font-size: 20px;
+  color: #ff5252;
+  opacity: 0.7;
+  transition: opacity 0.3s;
+}
+
+.delete-btn:hover {
+  opacity: 1;
+}
+
+.client-ip {
+  font-weight: bold;
+}
+
+.last-seen {
+  font-size: 0.9em;
+  color: #aaa;
+}

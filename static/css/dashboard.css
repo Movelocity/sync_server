@@ -1,5 +1,10 @@
+/* 基础样式 */
 body {
   background-color: #212121;
+  color: #ffffff;
+}
+
+input[type="text"] {
   color: #ffffff;
 }
 
@@ -11,17 +16,23 @@ body {
   color: #e0e0e0;
 }
 
+/* 布局相关 */
+.row-ex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.clients-container {
+  margin: 0;
+}
+
+/* 状态样式 */
 .client-status {
   border-radius: 4px;
   margin-bottom: 8px;
   padding: 10px !important;
   transition: background-color 0.3s ease;
-}
-
-.row-ex {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 }
 
 .status-ok {
@@ -32,10 +43,91 @@ body {
   background-color: #63605f;
 }
 
-.clients-container {
-  margin: 0;
+/* 按钮样式 */
+.btn {
+  margin-right: 10px;
 }
 
+.btn:last-child {
+  margin-right: 0;
+}
+
+.edit-btn, 
+.confirm-btn, 
+.cancel-btn {
+  cursor: pointer;
+  font-size: 18px;
+  color: #7c7c7c;
+}
+
+.edit-btn:hover, 
+.confirm-btn:hover, 
+.cancel-btn:hover {
+  color: #b6b6b6;
+  transition: opacity 0.2s;
+}
+
+.confirm-btn {
+  color: #4CAF50;
+}
+
+.cancel-btn {
+  color: #F44336;
+}
+
+.delete-btn {
+  cursor: pointer;
+  font-size: 20px;
+  color: #ff5252;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.delete-btn:hover {
+  opacity: 1;
+}
+
+.client-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.client-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.client-ip {
+  font-weight: bold;
+}
+
+.last-seen {
+  font-size: 0.9em;
+  color: #aaa;
+}
+
+.note-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.note-text {
+  padding: 2px 5px;
+  border-radius: 3px;
+  color: #cfcfcf;
+}
+
+.note-input {
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+/* 文件列表样式 */
 .file-list {
   margin: 16px 0 0 0;
 }
@@ -61,56 +153,4 @@ body {
 
 .file-list .remove-btn:hover {
   background-color: rgba(255, 82, 82, 0.1);
-}
-
-.btn {
-  margin-right: 10px;
-}
-
-.btn:last-child {
-  margin-right: 0;
-}
-
-.client-info {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.client-controls {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.note-text {
-  cursor: pointer;
-  padding: 2px 5px;
-  border-radius: 3px;
-  color: #aaa;
-}
-
-.note-text:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-.delete-btn {
-  cursor: pointer;
-  font-size: 20px;
-  color: #ff5252;
-  opacity: 0.7;
-  transition: opacity 0.3s;
-}
-
-.delete-btn:hover {
-  opacity: 1;
-}
-
-.client-ip {
-  font-weight: bold;
-}
-
-.last-seen {
-  font-size: 0.9em;
-  color: #aaa;
 }

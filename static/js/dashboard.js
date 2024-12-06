@@ -17,10 +17,10 @@ class DashboardManager {
     this.updateVersionBtn.onclick = () => this.updateVersion();
   }
 
-  /** 每隔30秒更新一次客户端列表 */
+  /** 每隔10秒更新一次客户端列表 */
   initializeClientUpdates() {
     this.fetchClients();
-    setInterval(() => this.fetchClients(), 30000);
+    setInterval(() => this.fetchClients(), 10000);
   }
 
   /** 获取客户端列表 */
@@ -36,11 +36,16 @@ class DashboardManager {
         const li = document.createElement('li');
         li.classList.add('client-status', 'row-ex');
         
-        // 创建备注编辑区域
+        // 创建备注显示区域
         const noteSpan = document.createElement('span');
         noteSpan.classList.add('note-text');
-        noteSpan.textContent = data.note || '点击添加备注';
-        noteSpan.onclick = () => this.editNote(client, noteSpan, data.note);
+        noteSpan.textContent = data.note || '无备注';
+        
+        // 创建编辑按钮
+        const editBtn = document.createElement('i');
+        editBtn.classList.add('material-icons', 'edit-btn');
+        editBtn.textContent = 'edit';
+        editBtn.onclick = () => this.editNote(client, noteSpan, data.note);
         
         // 创建删除按钮
         const deleteBtn = document.createElement('i');
@@ -57,7 +62,11 @@ class DashboardManager {
         
         const controlsDiv = document.createElement('div');
         controlsDiv.classList.add('client-controls');
-        controlsDiv.appendChild(noteSpan);
+        const noteContainer = document.createElement('div');
+        noteContainer.classList.add('note-container');
+        noteContainer.appendChild(noteSpan);
+        noteContainer.appendChild(editBtn);
+        controlsDiv.appendChild(noteContainer);
         controlsDiv.appendChild(deleteBtn);
         li.appendChild(controlsDiv);
         
@@ -183,29 +192,79 @@ class DashboardManager {
 
   /** 编辑备注 */
   async editNote(clientIp, noteElement, currentNote) {
-    const newNote = prompt('请输入新的备注:', currentNote || '');
-    if (newNote === null) return; // 用户取消
+    // 创建输入框
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.checked = false;
+    input.value = currentNote || '';
+    input.classList.add('note-input');
     
-    try {
-      const response = await fetch(`/client/${clientIp}/note`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ note: newNote })
-      });
-      
-      const result = await response.json();
-      if (result.status === 'success') {
-        noteElement.textContent = newNote || '点击添加备注';
-        M.toast({html: '备注已更新'});
-      } else {
-        M.toast({html: '更新备注失败：' + result.message});
+    // 创建确认按钮
+    const confirmBtn = document.createElement('i');
+    confirmBtn.classList.add('material-icons', 'confirm-btn');
+    confirmBtn.textContent = 'check';
+    
+    // 创建取消按钮
+    const cancelBtn = document.createElement('i');
+    cancelBtn.classList.add('material-icons', 'cancel-btn');
+    cancelBtn.textContent = 'close';
+    
+    // 保存原始内容
+    const originalContent = noteElement.parentElement.innerHTML;
+    const noteContainer = noteElement.parentElement;
+    
+    // 清空并添加编辑界面
+    noteContainer.innerHTML = '';
+    noteContainer.appendChild(input);
+    noteContainer.appendChild(confirmBtn);
+    noteContainer.appendChild(cancelBtn);
+    
+    input.focus();
+    
+    // 确认修改
+    const confirmEdit = async () => {
+      const newNote = input.value.trim();
+      try {
+        const response = await fetch(`/client/${clientIp}/note`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ note: newNote })
+        });
+        
+        const result = await response.json();
+        if (result.status === 'success') {
+          noteElement.textContent = newNote || '无备注';
+          M.toast({html: '备注已更新'});
+          this.fetchClients(); // 刷新客户端列表
+        } else {
+          M.toast({html: '更新备注失败：' + result.message});
+          noteContainer.innerHTML = originalContent;
+        }
+      } catch (error) {
+        console.error('更新备注失败:', error);
+        M.toast({html: '更新备注失败'});
+        noteContainer.innerHTML = originalContent;
       }
-    } catch (error) {
-      console.error('更新备注失败:', error);
-      M.toast({html: '更新备注失败'});
-    }
+    };
+    
+    // 取消修改
+    const cancelEdit = () => {
+      noteContainer.innerHTML = originalContent;
+    };
+    
+    confirmBtn.onclick = confirmEdit;
+    cancelBtn.onclick = cancelEdit;
+    
+    // 处理回车确认和ESC取消
+    input.onkeydown = (e) => {
+      if (e.key === 'Enter') {
+        confirmEdit();
+      } else if (e.key === 'Escape') {
+        cancelEdit();
+      }
+    };
   }
 }
 

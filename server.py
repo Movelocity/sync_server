@@ -152,4 +152,4 @@ def update_client_note(client_ip):
     return jsonify({"status": "success"})
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=config['port'], debug=True)
+    app.run(host="0.0.0.0", port=config['port'], debug=False)

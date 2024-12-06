@@ -11,16 +11,19 @@ class DashboardManager {
     this.initializeClientUpdates();
   }
 
+  /** 初始化事件监听器 */
   initializeEventListeners() {
     this.uploadBtn.onclick = () => this.selectFiles();
     this.updateVersionBtn.onclick = () => this.updateVersion();
   }
 
+  /** 每隔30秒更新一次客户端列表 */
   initializeClientUpdates() {
     this.fetchClients();
     setInterval(() => this.fetchClients(), 30000);
   }
 
+  /** 获取客户端列表 */
   async fetchClients() {
     try {
       const response = await fetch('/clients');
@@ -68,6 +71,7 @@ class DashboardManager {
     }
   }
 
+  /** 更新文件列表 */
   updateFileListView() {
     this.fileListElement.innerHTML = '';
     this.cachedFiles.forEach((file, index) => {
@@ -87,6 +91,7 @@ class DashboardManager {
     });
   }
 
+  /** 选择文件 */
   selectFiles() {
     if(this.tmpInput) this.tmpInput.remove();
     this.tmpInput = document.createElement('input');
@@ -107,6 +112,7 @@ class DashboardManager {
     this.tmpInput.click();
   }
 
+  /** 上传文件 */
   async postFiles() {
     if (this.cachedFiles.length === 0) {
       M.toast({html: '没有文件需要上传'});
@@ -135,6 +141,7 @@ class DashboardManager {
     }
   }
 
+  /** 更新版本 */
   async updateVersion() {
     try {
       const status_ok = await this.postFiles();
@@ -150,6 +157,7 @@ class DashboardManager {
     }
   }
 
+  /** 删除客户端 */
   async deleteClient(clientIp) {
     if (!confirm(`确定要删除客户端 ${clientIp} 吗？`)) {
       return;
@@ -173,6 +181,7 @@ class DashboardManager {
     }
   }
 
+  /** 编辑备注 */
   async editNote(clientIp, noteElement, currentNote) {
     const newNote = prompt('请输入新的备注:', currentNote || '');
     if (newNote === null) return; // 用户取消

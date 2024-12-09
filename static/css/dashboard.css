@@ -173,8 +173,9 @@ input[type="text"] {
   color: #ffffff !important;
 }
 
-.modal h4 {
+.modal .modal-title {
   color: #e0e0e0;
+  margin-bottom: 1em;
 }
 
 .modal .btn-flat {

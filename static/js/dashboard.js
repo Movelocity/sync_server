@@ -184,6 +184,7 @@ class DashboardManager {
     this.currentClientNote = '';
     document.getElementById('noteTextarea').value = '';
     document.getElementById('deleteCheckbox').checked = true;
+    document.querySelector('#clientInfoModal .modal-title').textContent = clientIp;
     M.updateTextFields();
     this.clientInfoModal.open();
   }
@@ -195,6 +196,7 @@ class DashboardManager {
     const textarea = document.getElementById('noteTextarea');
     textarea.value = currentNote || '';
     document.getElementById('deleteCheckbox').checked = false;
+    document.querySelector('#clientInfoModal .modal-title').textContent = clientIp;
     M.textareaAutoResize(textarea);
     M.updateTextFields();
     this.clientInfoModal.open();

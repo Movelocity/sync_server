@@ -15,6 +15,7 @@ class DashboardManager {
 
     this.initializeEventListeners();
     this.initializeModals();
+    this.initializeTabs();
     this.initializeClientUpdates();
   }
 
@@ -43,6 +44,12 @@ class DashboardManager {
     });
     
     this.clientInfoModal = M.Modal.getInstance(document.getElementById('clientInfoModal'));
+  }
+
+  /** 初始化标签页 */
+  initializeTabs() {
+    const tabsElem = document.querySelector('.tabs');
+    M.Tabs.init(tabsElem, {});
   }
 
   /** 每隔10秒更新一次客户端列表 */

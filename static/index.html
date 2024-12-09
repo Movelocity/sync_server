@@ -9,36 +9,41 @@
   <link href="/static/css/dashboard.css" rel="stylesheet">
 </head>
 <body>
-  <div class="container">
-    <div class="row">
-      <div class="col s12">
-        <h4 class="header">多端文件版本同步</h4>
-        
-        <div class="section">
-          <h5 class="header">关联机器</h5>
-          <div class="card">
-            <div class="card-content">
-              <ul id="client-list" class="clients-container"></ul>
-            </div>
+  <nav class="nav-extended grey darken-4" style="position:fixed; z-index:10; padding-left: 2em;">
+    <div class="nav-content">
+      <ul class="tabs tabs-transparent">
+        <li class="tab"><a class="active" href="#clients">关联机器</a></li>
+        <li class="tab"><a href="#files">文件上传</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container" style="padding-top: 64px;">
+    <div id="clients" class="col s12">
+      <div class="section">
+        <div class="card">
+          <div class="card-content">
+            <ul id="client-list" class="clients-container"></ul>
           </div>
         </div>
+      </div>
+    </div>
 
-        <div class="section">
-          <h5 class="header">文件上传</h5>
-          <div class="card">
-            <div class="card-content">
-              <div class="row">
-                <div class="col s12">
-                  <button id="upload-btn" class="btn waves-effect waves-light">
-                    <i class="material-icons left">file_upload</i>上传文件
-                  </button>
-                  <button id="update-version-btn" class="btn waves-effect waves-light">
-                    <i class="material-icons left">system_update</i>更新版本
-                  </button>
-                </div>
+    <div id="files" class="col s12">
+      <div class="section">
+        <div class="card">
+          <div class="card-content">
+            <div class="row">
+              <div class="col s12">
+                <button id="upload-btn" class="btn waves-effect waves-light">
+                  <i class="material-icons left">file_upload</i>上传文件
+                </button>
+                <button id="update-version-btn" class="btn waves-effect waves-light">
+                  <i class="material-icons left">system_update</i>更新版本
+                </button>
               </div>
-              <ul id="file-list" class="file-list"></ul>
             </div>
+            <ul id="file-list" class="file-list"></ul>
           </div>
         </div>
       </div>

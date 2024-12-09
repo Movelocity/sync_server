@@ -51,7 +51,7 @@ input[type="text"] {
 }
 
 .status-warning {
-  background-color: #63605f;
+  background-color: #63605f31;
 }
 
 /* 按钮样式 */

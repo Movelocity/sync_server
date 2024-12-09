@@ -7,7 +7,14 @@ class DashboardManager {
     this.cachedFiles = [];
     this.tmpInput = null;
 
+    // Modal elements
+    this.clientInfoModal = null;
+    this.currentClientIp = null;
+    this.currentClientNote = null;
+    this.currentFileIndex = null;
+
     this.initializeEventListeners();
+    this.initializeModals();
     this.initializeClientUpdates();
   }
 
@@ -15,6 +22,27 @@ class DashboardManager {
   initializeEventListeners() {
     this.uploadBtn.onclick = () => this.selectFiles();
     this.updateVersionBtn.onclick = () => this.updateVersion();
+    
+    // Modal event listeners
+    document.getElementById('confirmClientInfoBtn').onclick = () => this.confirmClientInfo();
+  }
+
+  /** 初始化模态框 */
+  initializeModals() {
+    const modalElems = document.querySelectorAll('.modal');
+    M.Modal.init(modalElems, {
+      dismissible: true,
+      opacity: 0.5,
+      inDuration: 250,
+      outDuration: 250,
+      preventScrolling: true,
+      onCloseEnd: () => {
+        // Reset delete checkbox when modal is closed
+        document.getElementById('deleteCheckbox').checked = false;
+      }
+    });
+    
+    this.clientInfoModal = M.Modal.getInstance(document.getElementById('clientInfoModal'));
   }
 
   /** 每隔10秒更新一次客户端列表 */
@@ -44,14 +72,8 @@ class DashboardManager {
         // 创建编辑按钮
         const editBtn = document.createElement('i');
         editBtn.classList.add('material-icons', 'edit-btn');
-        editBtn.textContent = 'edit';
+        editBtn.textContent = 'menu';
         editBtn.onclick = () => this.editNote(client, noteSpan, data.note);
-        
-        // 创建删除按钮
-        const deleteBtn = document.createElement('i');
-        deleteBtn.classList.add('material-icons', 'delete-btn');
-        deleteBtn.textContent = 'delete';
-        deleteBtn.onclick = () => this.deleteClient(client);
         
         li.innerHTML = `
           <div class="client-info">
@@ -67,7 +89,6 @@ class DashboardManager {
         noteContainer.appendChild(noteSpan);
         noteContainer.appendChild(editBtn);
         controlsDiv.appendChild(noteContainer);
-        controlsDiv.appendChild(deleteBtn);
         li.appendChild(controlsDiv);
         
         const timeDiff = (now - clientTime) / 1000 / 60;
@@ -86,16 +107,7 @@ class DashboardManager {
     this.cachedFiles.forEach((file, index) => {
       const li = document.createElement('li');
       li.classList.add('row-ex');
-      li.innerHTML = `
-        <span>${file.name}</span>
-        <i class="material-icons remove-btn">close</i>
-      `;
-      
-      li.querySelector('.remove-btn').onclick = () => {
-        this.cachedFiles.splice(index, 1);
-        this.updateFileListView();
-      };
-      
+      li.innerHTML = `<span>${file.name}</span>`;
       this.fileListElement.appendChild(li);
     });
   }
@@ -168,64 +180,46 @@ class DashboardManager {
 
   /** 删除客户端 */
   async deleteClient(clientIp) {
-    if (!confirm(`确定要删除客户端 ${clientIp} 吗？`)) {
-      return;
-    }
-    
-    try {
-      const response = await fetch(`/client/${clientIp}`, {
-        method: 'DELETE'
-      });
-      const result = await response.json();
-      
-      if (result.status === 'success') {
-        M.toast({html: '客户端已删除'});
-        this.fetchClients();
-      } else {
-        M.toast({html: '删除失败：' + result.message});
-      }
-    } catch (error) {
-      console.error('删除客户端失败:', error);
-      M.toast({html: '删除客户端失败'});
-    }
+    this.currentClientIp = clientIp;
+    this.currentClientNote = '';
+    document.getElementById('noteTextarea').value = '';
+    document.getElementById('deleteCheckbox').checked = true;
+    M.updateTextFields();
+    this.clientInfoModal.open();
   }
 
   /** 编辑备注 */
   async editNote(clientIp, noteElement, currentNote) {
-    // 创建输入框
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.checked = false;
-    input.value = currentNote || '';
-    input.classList.add('note-input');
+    this.currentClientIp = clientIp;
+    this.currentClientNote = currentNote;
+    const textarea = document.getElementById('noteTextarea');
+    textarea.value = currentNote || '';
+    document.getElementById('deleteCheckbox').checked = false;
+    M.textareaAutoResize(textarea);
+    M.updateTextFields();
+    this.clientInfoModal.open();
+  }
+
+  /** 确认客户端信息更新 */
+  async confirmClientInfo() {
+    const shouldDelete = document.getElementById('deleteCheckbox').checked;
+    const newNote = document.getElementById('noteTextarea').value.trim();
     
-    // 创建确认按钮
-    const confirmBtn = document.createElement('i');
-    confirmBtn.classList.add('material-icons', 'confirm-btn');
-    confirmBtn.textContent = 'check';
-    
-    // 创建取消按钮
-    const cancelBtn = document.createElement('i');
-    cancelBtn.classList.add('material-icons', 'cancel-btn');
-    cancelBtn.textContent = 'close';
-    
-    // 保存原始内容
-    const originalContent = noteElement.parentElement.innerHTML;
-    const noteContainer = noteElement.parentElement;
-    
-    // 清空并添加编辑界面
-    noteContainer.innerHTML = '';
-    noteContainer.appendChild(input);
-    noteContainer.appendChild(confirmBtn);
-    noteContainer.appendChild(cancelBtn);
-    
-    input.focus();
-    
-    // 确认修改
-    const confirmEdit = async () => {
-      const newNote = input.value.trim();
-      try {
-        const response = await fetch(`/client/${clientIp}/note`, {
+    try {
+      if (shouldDelete) {
+        const response = await fetch(`/client/${this.currentClientIp}`, {
+          method: 'DELETE'
+        });
+        const result = await response.json();
+        
+        if (result.status === 'success') {
+          M.toast({html: '客户端已删除'});
+        } else {
+          M.toast({html: '删除失败：' + result.message});
+          return;
+        }
+      } else if (newNote !== this.currentClientNote) {
+        const response = await fetch(`/client/${this.currentClientIp}/note`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
@@ -235,36 +229,22 @@ class DashboardManager {
         
         const result = await response.json();
         if (result.status === 'success') {
-          noteElement.textContent = newNote || '无备注';
           M.toast({html: '备注已更新'});
-          this.fetchClients(); // 刷新客户端列表
         } else {
           M.toast({html: '更新备注失败：' + result.message});
-          noteContainer.innerHTML = originalContent;
+          return;
         }
-      } catch (error) {
-        console.error('更新备注失败:', error);
-        M.toast({html: '更新备注失败'});
-        noteContainer.innerHTML = originalContent;
       }
-    };
-    
-    // 取消修改
-    const cancelEdit = () => {
-      noteContainer.innerHTML = originalContent;
-    };
-    
-    confirmBtn.onclick = confirmEdit;
-    cancelBtn.onclick = cancelEdit;
-    
-    // 处理回车确认和ESC取消
-    input.onkeydown = (e) => {
-      if (e.key === 'Enter') {
-        confirmEdit();
-      } else if (e.key === 'Escape') {
-        cancelEdit();
-      }
-    };
+      
+      this.fetchClients();
+    } catch (error) {
+      console.error('操作失败:', error);
+      M.toast({html: '操作失败'});
+    } finally {
+      this.clientInfoModal.close();
+      this.currentClientIp = null;
+      this.currentClientNote = null;
+    }
   }
 }
 

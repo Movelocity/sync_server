@@ -24,7 +24,7 @@ input[type="text"] {
   width: 49%;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 930px) {
   .row-ex {
     width: 100%;
   }
@@ -47,7 +47,7 @@ input[type="text"] {
 }
 
 .status-ok {
-  background-color: #2e7a1f;
+  background-color: #1b5e20;
 }
 
 .status-warning {
@@ -209,7 +209,7 @@ input[type="text"] {
 
 /* Text truncation */
 .note-text {
-  max-width: 200px;
+  max-width: 240px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
